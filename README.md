@@ -102,8 +102,8 @@ MA35D1_Buildroot$ vi output/build/arm-trusted-firmware-custom/fdts/ma35d1.dtsi
 - <UART16_SUBM>,
 + <UART16_TZNS>,
 
-MA35D1_Buildroot$ make arm-trusted-firmware-rebuild -j 56
-MA35D1_Buildroot$ make -j 56
+MA35D1_Buildroot$ make uboot-rebuild linux-rebuild optee-os-rebuild arm-trusted-firmware-rebuild -j 8
+MA35D1_Buildroot$ make -j 8
 ```
 
 Finally, the SD image is in below path.
