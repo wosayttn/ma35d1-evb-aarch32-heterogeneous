@@ -6,10 +6,12 @@ About more board information, please refer README.md in numaker-hmi-ma35d1 folde
 
 ## **Requirement**
 
-- MA35D1 Buildroot (https://github.com/OpenNuvoton/MA35D1_Buildroot)
+- [MA35D1 Buildroot](https://github.com/OpenNuvoton/MA35D1_Buildroot)
+
 - MA35D1 rt-thread
 
 ## **Build**
+
 Follow steps to build a bootable SD image in this section.
 
 ### **Build core1 execution**
@@ -45,9 +47,14 @@ SECTIONS
 ...
 ```
 
-- Finally, build the aarch32 preload using AARCH64 toolchain and rtthread exectuion using AARCH32 toolchain.
+- Finally, build the preload object code using AARCH64 toolchain and rtthread execution using AARCH32 toolchain.
+
+- You can download the toolchain here. [Arm GNU Toolchain - AARCH64 baremetal 8-2019-q3](https://developer.arm.com/-/media/Files/downloads/gnu-a/8.3-2019.03/binrel/gcc-arm-8.3-2019.03-i686-mingw32-aarch64-elf.tar.xz?revision=1c8636ec-0cca-455b-be17-726f1b396f46&rev=1c8636ec0cca455bbe17726f1b396f46&hash=0107DE39C8803E7C762E2FB079BF3822AA6B6AE2) And, set your toolchain installation path in **env_build.bat** script.
+
+- After preload building, **you should close env-window to reset environment variable**. Don't build the rtthread execution directly.
 
 **path-to-rtthread\bsp\nuvoton\ma35d1-evb-aarch32-heterogeneous\preload**
+
 ```bash
 > env_build.bat
 
@@ -60,8 +67,10 @@ python transcode.py
 ```
 
 **path-to-rtthread\bsp\nuvoton\ma35d1-evb-aarch32-heterogeneous**
+
 ```bash
 > menuconfig --generate
+> scons -c
 > scons -j 8
 
 ...
@@ -76,6 +85,7 @@ scons: done building targets.
 ```
 
 ### **Build SD image**
+
 Below steps shown you how to construct heterogeneous system in buildroot. Enable below option and fill-in related parameters.
 
 ```bash
@@ -95,6 +105,7 @@ MA35D1_Buildroot$ make -j 8
 ```
 
 The UART16 core1 used permission is assigned to SUBM by default, we should switch to TZNS.
+
 ```bash
 MA35D1_Buildroot$ vi output/build/arm-trusted-firmware-custom/fdts/ma35d1.dtsi
 
@@ -102,11 +113,12 @@ MA35D1_Buildroot$ vi output/build/arm-trusted-firmware-custom/fdts/ma35d1.dtsi
 - <UART16_SUBM>,
 + <UART16_TZNS>,
 
-MA35D1_Buildroot$ make arm-trusted-firmware-rebuild -j 56
-MA35D1_Buildroot$ make -j 56
+MA35D1_Buildroot$ make uboot-rebuild linux-rebuild optee-os-rebuild arm-trusted-firmware-rebuild -j 8
+MA35D1_Buildroot$ make -j 8
 ```
 
 Finally, the SD image is in below path.
+
 ```bash
 MA35D1_Buildroot$ ls output/images/core-image-buildroot-ma35d1-som-256m.rootfs.sdcard
 ```
